@@ -13,9 +13,9 @@ def download_file(file_name, bucket):
     """
     print(file_name)
     session = boto3.Session(
-        aws_access_key_id="ASIA3BTX2PNFISOB5RVG",
-        aws_secret_access_key="a9V7PtIJV6muHvIL/q5PfZlXafobicpmvl42vzek",
-        aws_session_token="IQoJb3JpZ2luX2VjEDAaCXVzLXdlc3QtMiJGMEQCIAJJcdErP1WTaDlYlg35GwYJC9RSjOfeZQo1GmzRNym8AiAUwM+dgcpb4CvHv3iDk6/PX4Pt88iJ2U0rn0p3ZfwukCquAghpEAAaDDc1OTM4Njc2NjE1NCIMTurUeih8q4dyP74oKosCbKv/i/FMX2BfXEEOq00YBqfp53haHJYaAQrB1kbI3nWk1Bcbk3TO8iYiaAM26ev0TlNAAIKQX1ixcqumQ/0FOowxh7Khzu3XnTNrAlIFEtvno706kUE/cDfKnVxk0SlXQIzjsDjrdQ5JBXBgYxKaAzhFlQn/t4cyOtKbt9WO91DR6tLu8VD3MyvJD0sM6xJzV9Ex+sCByifh/4Ov/iM+c6QF/7kILOGgkosuX5ANwvbb4ArdQYiXlvs1lW3FIubQQvu19TeXCGzbjB6iT4LK0djE0OlCpPyQPsptYgE59iZejg6ij4WTLMV3gbdL+kqpb0K8sPPMFw5FaxIIIZ5wU3UzPPOIvg5DJFCyMOqO57AGOp4BIajuHYf9F6gfS3ohP6AR+NQA/PEaaam5z1RcD/SbeSNDxl5cqtJc7txP2LNRXUnIoDWEaQ99q5yzC6HslkfLJUiJwodIfuX9T1ZA7zdOaRE0FG4q+Sf6iaWMW1H95meVO8tl413lOTv/yjqciETH9koQzkqdyfmET8SID88lENop5U+4kyEhmd2PVsqkRyEp4mZebpCYmM0biiGOmNw="
+        aws_access_key_id=aws_access_key_id,
+        aws_secret_access_key=aws_secret_access_key,
+        aws_session_token=aws_session_token
     )
     s3 = boto3.resource('s3')
     bucket_obj = s3.Bucket(bucket)
@@ -40,6 +40,9 @@ DATABASE = os.environ.get("DATABASE") or "employees"
 COLOR_FROM_ENV = os.environ.get('APP_IMAGE') or "lime"
 DBPORT = int(os.environ.get("DBPORT"))
 BUCKET = os.environ.get("BUCKET")
+aws_access_key_id=os.environ.get("aws_access_key_id")
+aws_secret_access_key=os.environ.get("aws_secret_access_key")
+aws_session_token=os.environ.get("aws_session_token")
 
 download_file(file_name=COLOR_FROM_ENV, bucket=BUCKET)
 imgPath = "/static/"+COLOR_FROM_ENV
