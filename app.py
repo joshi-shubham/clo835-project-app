@@ -83,10 +83,20 @@ def home():
 
 @app.route("/about", methods=['GET','POST'])
 def about():
+    if os.path.exists(imgPath):
+        print("Image exists at", imgPath)
+    else:
+        print("Image does not exist at", imgPath)
+        download_file(file_name=IMAGE_FROM_ENV, bucket=BUCKET)
     return render_template('about.html', color=imgPath)
     
 @app.route("/addemp", methods=['POST'])
 def AddEmp():
+    if os.path.exists(imgPath):
+        print("Image exists at", imgPath)
+    else:
+        print("Image does not exist at", imgPath)
+        download_file(file_name=IMAGE_FROM_ENV, bucket=BUCKET)
     emp_id = request.form['emp_id']
     first_name = request.form['first_name']
     last_name = request.form['last_name']
@@ -111,11 +121,21 @@ def AddEmp():
 
 @app.route("/getemp", methods=['GET', 'POST'])
 def GetEmp():
+    if os.path.exists(imgPath):
+        print("Image exists at", imgPath)
+    else:
+        print("Image does not exist at", imgPath)
+        download_file(file_name=IMAGE_FROM_ENV, bucket=BUCKET)
     return render_template("getemp.html", color=imgPath)
 
 
 @app.route("/fetchdata", methods=['GET','POST'])
 def FetchData():
+    if os.path.exists(imgPath):
+        print("Image exists at", imgPath)
+    else:
+        print("Image does not exist at", imgPath)
+        download_file(file_name=IMAGE_FROM_ENV, bucket=BUCKET)
     emp_id = request.form['emp_id']
 
     output = {}
