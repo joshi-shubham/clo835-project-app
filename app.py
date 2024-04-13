@@ -79,6 +79,11 @@ COLOR = random.choice(["red", "green", "blue", "blue2", "darkblue", "pink", "lim
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
+    if os.path.exists(imgPath):
+        print("Image exists at", imgPath)
+    else:
+        print("Image does not exist at", imgPath)
+        download_file(file_name=COLOR_FROM_ENV, bucket=BUCKET)
     return render_template('addemp.html', color=imgPath)
 
 @app.route("/about", methods=['GET','POST'])
