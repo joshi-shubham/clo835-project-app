@@ -18,15 +18,10 @@ def download_file(file_name, bucket):
         aws_session_token=aws_session_token
     )
     s3 = boto3.resource('s3')
-    bucket_obj = s3.Bucket(bucket)
-    objects = bucket_obj.objects.all()
-    print("List of S3 Objects:")
-    for obj in objects:
-        print(obj.key)
     # os.makedirs("./downloads")
-    onlyfiles = [f for f in listdir("./") if isfile(join("./", f))]
-    print (onlyfiles)
     output = f"static/{file_name}"
+    print(f"the file path is ", output)
+    app.logger.info("the file path is %s ", output)
     s3.Bucket(bucket).download_file(file_name, output)
 
     return output
@@ -37,15 +32,15 @@ DBHOST = os.environ.get("DBHOST") or "localhost"
 DBUSER = os.environ.get("DBUSER") or "root"
 DBPWD = os.environ.get("DBPWD") or "password"
 DATABASE = os.environ.get("DATABASE") or "employees"
-COLOR_FROM_ENV = os.environ.get('APP_IMAGE') or "lime"
+IMAGE_FROM_ENV = os.environ.get('APP_IMAGE') or "lime"
 DBPORT = int(os.environ.get("DBPORT"))
 BUCKET = os.environ.get("BUCKET")
 aws_access_key_id=os.environ.get("aws_access_key_id")
 aws_secret_access_key=os.environ.get("aws_secret_access_key")
 aws_session_token=os.environ.get("aws_session_token")
 
-download_file(file_name=COLOR_FROM_ENV, bucket=BUCKET)
-imgPath = "/static/"+COLOR_FROM_ENV
+download_file(file_name=IMAGE_FROM_ENV, bucket=BUCKET)
+imgPath = "/static/"+IMAGE_FROM_ENV
 # Create a connection to the MySQL database
 db_conn = connections.Connection(
     host= DBHOST,
@@ -68,7 +63,7 @@ color_codes = {
     "darkblue": "#130f40",
     "lime": "#C1FF9C",
 }
-
+download_file(file_name=IMAGE_FROM_ENV, bucket=BUCKET)
 
 # Create a string of supported colors
 SUPPORTED_COLORS = ",".join(color_codes.keys())
@@ -83,7 +78,7 @@ def home():
         print("Image exists at", imgPath)
     else:
         print("Image does not exist at", imgPath)
-        download_file(file_name=COLOR_FROM_ENV, bucket=BUCKET)
+        download_file(file_name=IMAGE_FROM_ENV, bucket=BUCKET)
     return render_template('addemp.html', color=imgPath)
 
 @app.route("/about", methods=['GET','POST'])
@@ -157,11 +152,11 @@ if __name__ == '__main__':
     if args.color:
         print("Color from command line argument =" + args.color)
         COLOR = args.color
-        if COLOR_FROM_ENV:
-            print("A color was set through environment variable -" + COLOR_FROM_ENV + ". However, color from command line argument takes precendence.")
-    elif COLOR_FROM_ENV:
-        print("No Command line argument. Color from environment variable =" + COLOR_FROM_ENV)
-        COLOR = COLOR_FROM_ENV
+        if IMAGE_FROM_ENV:
+            print("A Image was set through environment variable -" + IMAGE_FROM_ENV + ". However, Image from command line argument takes precendence.")
+    elif IMAGE_FROM_ENV:
+        print("No Command line argument. Image from environment variable =" + IMAGE_FROM_ENV)
+        COLOR = IMAGE_FROM_ENV
     else:
         print("No command line argument or environment variable. Picking a Random Color =" + COLOR)
 
@@ -170,4 +165,4 @@ if __name__ == '__main__':
     #     print("Color not supported. Received '" + COLOR + "' expected one of " + SUPPORTED_COLORS)
     #     exit(1)
 
-    app.run(host='0.0.0.0',port=8080,debug=True)
+    app.run(host='0.0.0.0',port=81,debug=True)
