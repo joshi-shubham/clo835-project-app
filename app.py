@@ -3,17 +3,46 @@ from pymysql import connections
 import os
 import random
 import argparse
+import boto3
+from os import listdir
+from os.path import isfile, join
 
+def download_file(file_name, bucket):
+    """
+    Function to download a given file from an S3 bucket
+    """
+    print(file_name)
+    session = boto3.Session(
+        aws_access_key_id="ASIA3BTX2PNFISOB5RVG",
+        aws_secret_access_key="a9V7PtIJV6muHvIL/q5PfZlXafobicpmvl42vzek",
+        aws_session_token="IQoJb3JpZ2luX2VjEDAaCXVzLXdlc3QtMiJGMEQCIAJJcdErP1WTaDlYlg35GwYJC9RSjOfeZQo1GmzRNym8AiAUwM+dgcpb4CvHv3iDk6/PX4Pt88iJ2U0rn0p3ZfwukCquAghpEAAaDDc1OTM4Njc2NjE1NCIMTurUeih8q4dyP74oKosCbKv/i/FMX2BfXEEOq00YBqfp53haHJYaAQrB1kbI3nWk1Bcbk3TO8iYiaAM26ev0TlNAAIKQX1ixcqumQ/0FOowxh7Khzu3XnTNrAlIFEtvno706kUE/cDfKnVxk0SlXQIzjsDjrdQ5JBXBgYxKaAzhFlQn/t4cyOtKbt9WO91DR6tLu8VD3MyvJD0sM6xJzV9Ex+sCByifh/4Ov/iM+c6QF/7kILOGgkosuX5ANwvbb4ArdQYiXlvs1lW3FIubQQvu19TeXCGzbjB6iT4LK0djE0OlCpPyQPsptYgE59iZejg6ij4WTLMV3gbdL+kqpb0K8sPPMFw5FaxIIIZ5wU3UzPPOIvg5DJFCyMOqO57AGOp4BIajuHYf9F6gfS3ohP6AR+NQA/PEaaam5z1RcD/SbeSNDxl5cqtJc7txP2LNRXUnIoDWEaQ99q5yzC6HslkfLJUiJwodIfuX9T1ZA7zdOaRE0FG4q+Sf6iaWMW1H95meVO8tl413lOTv/yjqciETH9koQzkqdyfmET8SID88lENop5U+4kyEhmd2PVsqkRyEp4mZebpCYmM0biiGOmNw="
+    )
+    s3 = boto3.resource('s3')
+    bucket_obj = s3.Bucket(bucket)
+    objects = bucket_obj.objects.all()
+    print("List of S3 Objects:")
+    for obj in objects:
+        print(obj.key)
+    # os.makedirs("./downloads")
+    onlyfiles = [f for f in listdir("./") if isfile(join("./", f))]
+    print (onlyfiles)
+    output = f"static/{file_name}"
+    s3.Bucket(bucket).download_file(file_name, output)
+
+    return output
 
 app = Flask(__name__)
 
 DBHOST = os.environ.get("DBHOST") or "localhost"
 DBUSER = os.environ.get("DBUSER") or "root"
-DBPWD = os.environ.get("DBPWD") or "passwors"
+DBPWD = os.environ.get("DBPWD") or "password"
 DATABASE = os.environ.get("DATABASE") or "employees"
-COLOR_FROM_ENV = os.environ.get('APP_COLOR') or "lime"
+COLOR_FROM_ENV = os.environ.get('APP_IMAGE') or "lime"
 DBPORT = int(os.environ.get("DBPORT"))
+BUCKET = os.environ.get("BUCKET")
 
+download_file(file_name=COLOR_FROM_ENV, bucket=BUCKET)
+imgPath = "/static/"+COLOR_FROM_ENV
 # Create a connection to the MySQL database
 db_conn = connections.Connection(
     host= DBHOST,
@@ -47,11 +76,11 @@ COLOR = random.choice(["red", "green", "blue", "blue2", "darkblue", "pink", "lim
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
-    return render_template('addemp.html', color=color_codes[COLOR])
+    return render_template('addemp.html', color=imgPath)
 
 @app.route("/about", methods=['GET','POST'])
 def about():
-    return render_template('about.html', color=color_codes[COLOR])
+    return render_template('about.html', color=imgPath)
     
 @app.route("/addemp", methods=['POST'])
 def AddEmp():
@@ -75,11 +104,11 @@ def AddEmp():
         cursor.close()
 
     print("all modification done...")
-    return render_template('addempoutput.html', name=emp_name, color=color_codes[COLOR])
+    return render_template('addempoutput.html', name=emp_name, color=imgPath)
 
 @app.route("/getemp", methods=['GET', 'POST'])
 def GetEmp():
-    return render_template("getemp.html", color=color_codes[COLOR])
+    return render_template("getemp.html", color=imgPath)
 
 
 @app.route("/fetchdata", methods=['GET','POST'])
@@ -129,8 +158,8 @@ if __name__ == '__main__':
         print("No command line argument or environment variable. Picking a Random Color =" + COLOR)
 
     # Check if input color is a supported one
-    if COLOR not in color_codes:
-        print("Color not supported. Received '" + COLOR + "' expected one of " + SUPPORTED_COLORS)
-        exit(1)
+    # if COLOR not in color_codes:
+    #     print("Color not supported. Received '" + COLOR + "' expected one of " + SUPPORTED_COLORS)
+    #     exit(1)
 
     app.run(host='0.0.0.0',port=8080,debug=True)

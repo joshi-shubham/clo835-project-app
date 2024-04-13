@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 RUN apt-get update -y
-COPY . /app
+COPY requirements.txt /app/requirements.txt
 WORKDIR /app
 RUN set -xe \
     && apt-get update -y \
@@ -8,6 +8,7 @@ RUN set -xe \
     && apt-get install -y mysql-client 
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
+COPY . .
 EXPOSE 8080
 ENTRYPOINT [ "python3" ]
 CMD [ "app.py" ]
