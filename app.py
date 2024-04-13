@@ -79,7 +79,7 @@ def home():
     else:
         print("Image does not exist at", imgPath)
         download_file(file_name=IMAGE_FROM_ENV, bucket=BUCKET)
-    return render_template('addemp.html', color=imgPath)
+    return render_template('addemp.html', imagePath=imgPath)
 
 @app.route("/about", methods=['GET','POST'])
 def about():
@@ -88,7 +88,7 @@ def about():
     else:
         print("Image does not exist at", imgPath)
         download_file(file_name=IMAGE_FROM_ENV, bucket=BUCKET)
-    return render_template('about.html', color=imgPath)
+    return render_template('about.html', imagePath=imgPath)
     
 @app.route("/addemp", methods=['POST'])
 def AddEmp():
@@ -117,7 +117,7 @@ def AddEmp():
         cursor.close()
 
     print("all modification done...")
-    return render_template('addempoutput.html', name=emp_name, color=imgPath)
+    return render_template('addempoutput.html', name=emp_name, imagePath=imgPath)
 
 @app.route("/getemp", methods=['GET', 'POST'])
 def GetEmp():
@@ -126,7 +126,7 @@ def GetEmp():
     else:
         print("Image does not exist at", imgPath)
         download_file(file_name=IMAGE_FROM_ENV, bucket=BUCKET)
-    return render_template("getemp.html", color=imgPath)
+    return render_template("getemp.html", imagePath=imgPath)
 
 
 @app.route("/fetchdata", methods=['GET','POST'])
@@ -160,7 +160,7 @@ def FetchData():
         cursor.close()
 
     return render_template("getempoutput.html", id=output["emp_id"], fname=output["first_name"],
-                           lname=output["last_name"], interest=output["primary_skills"], location=output["location"], color=color_codes[COLOR])
+                           lname=output["last_name"], interest=output["primary_skills"], location=output["location"], imagePath=imgPath)
 
 if __name__ == '__main__':
     
